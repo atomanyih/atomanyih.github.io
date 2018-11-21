@@ -1,0 +1,7 @@
+{
+  "name": "orb",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "August Toman-Yih <august.toman.yih@gmail.com>",
+  "license": "MIT"
+}
