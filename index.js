@@ -41,13 +41,13 @@ function animate(t) {
 function render(t) {
   const bandMovementRange = 10;
 
-  const yBasis = 20;
-  const period = 4000;
+  const yBasis = -15;
+  const period = 8000;
 
   const bandStartY = yBasis + Math.sin(t / period * 2 * Math.PI) * bandMovementRange;
 
   const bandThickness = 30;
-  const bandEndY = yBasis + bandThickness +  Math.sin((t + 250) / period * 2 * Math.PI) * bandMovementRange;
+  const bandEndY = yBasis + bandThickness +  Math.sin((t + 500) / period * 2 * Math.PI) * bandMovementRange;
 
   bottomSection.setAttribute('d', otherPathStuff(bandEndY, 100, degToRad(10)));
   topSection.setAttribute('d', pathStuff(bandStartY, 100, degToRad(10)));
@@ -57,12 +57,19 @@ function pathStuff(y, r, viewAngle) {
   const x = Math.sqrt(r**2 - y**2);
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
-  const circlePath = `M ${-x} ${y} A ${r} ${r} 0 1 1 ${x} ${y}`;
 
   const yPrime = y * Math.cos(viewAngle);
   const rx = Math.sqrt(r**2 - yPrime**2);
   const ry = rx * Math.sin(viewAngle);
 
+  if(y < 0) {
+    const circlePath = `M ${-x} ${y} A ${r} ${r} 0 0 1 ${x} ${y}`;
+    const ellipsePath = `A ${rx} ${ry} 0 1 1 ${-x} ${y}`;
+
+    return [circlePath, ellipsePath].join(' ')
+  }
+
+  const circlePath = `M ${-x} ${y} A ${r} ${r} 0 1 1 ${x} ${y}`;
   const ellipsePath = `A ${rx} ${ry} 0 0 1 ${-x} ${y}`;
   const ellipsePathComplete = `A ${rx} ${ry} 0 1 1 ${x} ${y}`;
 
@@ -73,12 +80,20 @@ function otherPathStuff(y, r, viewAngle) {
   const x = Math.sqrt(r**2 - y**2);
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
-  const circlePath = `M ${-x} ${y} A ${r} ${r} 0 0 0 ${x} ${y}`;
 
   const yPrime = y * Math.cos(viewAngle);
   const rx = Math.sqrt(r**2 - yPrime**2);
   const ry = rx * Math.sin(viewAngle);
 
+  if(y < 0) {
+    const circlePath = `M ${-x} ${y} A ${r} ${r} 0 1 0 ${x} ${y}`;
+    const ellipsePath = `A ${rx} ${ry} 0 0 0 ${-x} ${y}`;
+    const ellipsePathComplete = `A ${rx} ${ry} 0 1 0 ${x} ${y}`;
+
+    return [circlePath, ellipsePath, ellipsePathComplete].join(' ')
+  }
+
+  const circlePath = `M ${-x} ${y} A ${r} ${r} 0 0 0 ${x} ${y}`;
   const ellipsePath = `A ${rx} ${ry} 0 1 0 ${-x} ${y}`;
   const ellipsePathComplete = `A ${rx} ${ry} 0 0 0 ${x} ${y}`;
 

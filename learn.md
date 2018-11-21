@@ -8,3 +8,6 @@ https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#Arcs
 
 
 all the equation solving from notebook
+
+
+when you move to the top hemisphere, you switch large arc flag
