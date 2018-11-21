@@ -111,6 +111,8 @@ function lowerSphereSection(y, r, viewAngle) {
 }
 
 function sphereSlice(y, r, viewAngle) {
+  // this should just be an <ellipse>
+
   const x = Math.sqrt(r**2 - y**2);
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
@@ -123,15 +125,15 @@ function sphereSlice(y, r, viewAngle) {
     // why is this still necessary?
     // why is the large arc flag reversed?
     // I think maybe bc I'm drawing now the top part of the ellipse first
-    const start = `M ${x} ${y}`;
-    const ellipsePath = `A ${rx} ${ry} 0 1 0 ${-x} ${y}`;
-    const ellipsePathComplete = `A ${rx} ${ry} 0 0 0 ${x} ${y}`;
+    const start = `M ${-x} ${y}`;
+    const ellipsePath = `A ${rx} ${ry} 0 0 0 ${x} ${y}`;
+    const ellipsePathComplete = `A ${rx} ${ry} 0 1 0 ${-x} ${y}`;
 
     return [start, ellipsePath, ellipsePathComplete].join(' ')
   }
-  const start = `M ${x} ${y}`;
-  const ellipsePath = `A ${rx} ${ry} 0 0 0 ${-x} ${y}`;
-  const ellipsePathComplete = `A ${rx} ${ry} 0 1 0 ${x} ${y}`;
+  const start = `M ${-x} ${y}`;
+  const ellipsePath = `A ${rx} ${ry} 0 1 0 ${x} ${y}`;
+  const ellipsePathComplete = `A ${rx} ${ry} 0 0 0 ${-x} ${y}`;
 
   return [start, ellipsePath, ellipsePathComplete].join(' ')
 }
