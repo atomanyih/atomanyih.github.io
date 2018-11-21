@@ -66,14 +66,20 @@ function render(t) {
   disc.setAttribute('d', sphereSlice(bandEndY, r, viewAngle));
 }
 
-function upperSphereSection(y, r, viewAngle) {
+function doCalc({y, r, viewAngle}) {
   const x = Math.sqrt(r**2 - y**2);
-
-  // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
 
   const yPrime = y * Math.cos(viewAngle);
   const rx = Math.sqrt(r**2 - yPrime**2);
   const ry = rx * Math.sin(viewAngle);
+
+  return {y, x, rx, ry}
+}
+
+function upperSphereSection(y, r, viewAngle) {
+  const {x, rx, ry} = doCalc({y, r, viewAngle});
+
+  // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
 
   if(y < 0) {
     const circlePath = `M ${-x} ${y} A ${r} ${r} 0 0 1 ${x} ${y}`;
@@ -89,13 +95,9 @@ function upperSphereSection(y, r, viewAngle) {
 }
 
 function lowerSphereSection(y, r, viewAngle) {
-  const x = Math.sqrt(r**2 - y**2);
+  const {x, rx, ry} = doCalc({y, r, viewAngle});
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
-
-  const yPrime = y * Math.cos(viewAngle);
-  const rx = Math.sqrt(r**2 - yPrime**2);
-  const ry = rx * Math.sin(viewAngle);
 
   if(y < 0) {
     const circlePath = `M ${-x} ${y} A ${r} ${r} 0 1 0 ${x} ${y}`;
@@ -113,13 +115,9 @@ function lowerSphereSection(y, r, viewAngle) {
 function sphereSlice(y, r, viewAngle) {
   // this should just be an <ellipse>
 
-  const x = Math.sqrt(r**2 - y**2);
+  const {x, rx, ry} = doCalc({y, r, viewAngle});
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
-
-  const yPrime = y * Math.cos(viewAngle);
-  const rx = Math.sqrt(r**2 - yPrime**2);
-  const ry = rx * Math.sin(viewAngle);
 
   if(y > 0) {
     // why is this still necessary?
