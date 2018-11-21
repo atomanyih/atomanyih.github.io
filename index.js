@@ -52,14 +52,13 @@ function render(t) {
   const viewAngle = degToRad(15 + Math.sin(t / (period * 4) * 2 * Math.PI) * 10);
 
   const bandMovementRange = r/10;
-  const bandThickness = r/10 * 3;
+  const bandThickness = r/10 * 5;
 
-  const yBasis = - bandThickness / 2;
+  const yBasis = 0;
 
   const bandStartY = yBasis + Math.sin(t / period * 2 * Math.PI) * bandMovementRange;
 
-  const bandEndY = yBasis + bandThickness +  Math.sin((t + 500) / period * 2 * Math.PI) * bandMovementRange;
-
+  const bandEndY = yBasis + bandThickness +  Math.sin((t + 1000) / period * 2 * Math.PI) * bandMovementRange;
 
   bottomSection.setAttribute('d', lowerSphereSection(doCalc({yPrime: bandEndY, r, viewAngle})));
   topSection.setAttribute('d', upperSphereSection(doCalc({yPrime: bandStartY, r, viewAngle})));
