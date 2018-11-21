@@ -42,10 +42,12 @@ function render(t) {
   const bandMovementRange = 10;
 
   const yBasis = 20;
-  const bandStartY = yBasis + Math.sin(t / 4000 * 2 * Math.PI) * bandMovementRange;
+  const period = 4000;
+
+  const bandStartY = yBasis + Math.sin(t / period * 2 * Math.PI) * bandMovementRange;
 
   const bandThickness = 30;
-  const bandEndY = yBasis + bandThickness +  Math.sin((t + 250) / 4000 * 2 * Math.PI) * bandMovementRange;
+  const bandEndY = yBasis + bandThickness +  Math.sin((t + 250) / period * 2 * Math.PI) * bandMovementRange;
 
   bottomSection.setAttribute('d', otherPathStuff(bandEndY, 100, degToRad(10)));
   topSection.setAttribute('d', pathStuff(bandStartY, 100, degToRad(10)));
