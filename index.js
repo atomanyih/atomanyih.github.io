@@ -61,15 +61,14 @@ function render(t) {
   const bandEndY = yBasis + bandThickness +  Math.sin((t + 500) / period * 2 * Math.PI) * bandMovementRange;
 
 
-  bottomSection.setAttribute('d', lowerSphereSection(doCalc({y: bandEndY, r, viewAngle})));
-  topSection.setAttribute('d', upperSphereSection(doCalc({y: bandStartY, r, viewAngle})));
-  disc.setAttribute('d', sphereSlice(doCalc({y: bandEndY, r, viewAngle})));
+  bottomSection.setAttribute('d', lowerSphereSection(doCalc({yPrime: bandEndY, r, viewAngle})));
+  topSection.setAttribute('d', upperSphereSection(doCalc({yPrime: bandStartY, r, viewAngle})));
+  disc.setAttribute('d', sphereSlice(doCalc({yPrime: bandEndY, r, viewAngle})));
 }
 
-function doCalc({y, r, viewAngle}) {
+function doCalc({yPrime, r, viewAngle}) {
+  const y = yPrime / Math.cos(viewAngle);
   const x = Math.sqrt(r**2 - y**2);
-
-  const yPrime = y * Math.cos(viewAngle);
   const rx = Math.sqrt(r**2 - yPrime**2);
   const ry = rx * Math.sin(viewAngle);
 
