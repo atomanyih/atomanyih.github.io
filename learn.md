@@ -11,3 +11,6 @@ all the equation solving from notebook
 
 
 when you move to the top hemisphere, you switch large arc flag
+
+as it rotates the band appears to be a different size because the band thickness is based on the visible y,
+ not the y along the sphere axis 
