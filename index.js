@@ -61,9 +61,9 @@ function render(t) {
   const bandEndY = yBasis + bandThickness +  Math.sin((t + 500) / period * 2 * Math.PI) * bandMovementRange;
 
 
-  bottomSection.setAttribute('d', lowerSphereSection(bandEndY, r, viewAngle));
-  topSection.setAttribute('d', upperSphereSection(bandStartY, r, viewAngle));
-  disc.setAttribute('d', sphereSlice(bandEndY, r, viewAngle));
+  bottomSection.setAttribute('d', lowerSphereSection(doCalc({y: bandEndY, r, viewAngle})));
+  topSection.setAttribute('d', upperSphereSection(doCalc({y: bandStartY, r, viewAngle})));
+  disc.setAttribute('d', sphereSlice(doCalc({y: bandEndY, r, viewAngle})));
 }
 
 function doCalc({y, r, viewAngle}) {
@@ -73,12 +73,10 @@ function doCalc({y, r, viewAngle}) {
   const rx = Math.sqrt(r**2 - yPrime**2);
   const ry = rx * Math.sin(viewAngle);
 
-  return {y, x, rx, ry}
+  return {x, y, r, rx, ry}
 }
 
-function upperSphereSection(y, r, viewAngle) {
-  const {x, rx, ry} = doCalc({y, r, viewAngle});
-
+function upperSphereSection({x, y, r, rx, ry}) {
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
 
   if(y < 0) {
@@ -94,8 +92,7 @@ function upperSphereSection(y, r, viewAngle) {
   return [circlePath, ellipsePath].join(' ')
 }
 
-function lowerSphereSection(y, r, viewAngle) {
-  const {x, rx, ry} = doCalc({y, r, viewAngle});
+function lowerSphereSection({x, y, r, rx, ry}) {
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
 
@@ -112,10 +109,8 @@ function lowerSphereSection(y, r, viewAngle) {
   return [circlePath, ellipsePath].join(' ')
 }
 
-function sphereSlice(y, r, viewAngle) {
+function sphereSlice({x, y, r, rx, ry}) {
   // this should just be an <ellipse>
-
-  const {x, rx, ry} = doCalc({y, r, viewAngle});
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
 
