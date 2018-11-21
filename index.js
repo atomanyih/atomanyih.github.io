@@ -49,11 +49,11 @@ function render(t) {
   const bandThickness = 30;
   const bandEndY = yBasis + bandThickness +  Math.sin((t + 500) / period * 2 * Math.PI) * bandMovementRange;
 
-  bottomSection.setAttribute('d', otherPathStuff(bandEndY, 100, degToRad(10)));
-  topSection.setAttribute('d', pathStuff(bandStartY, 100, degToRad(10)));
+  bottomSection.setAttribute('d', lowerSphereSection(bandEndY, 100, degToRad(10)));
+  topSection.setAttribute('d', upperSphereSection(bandStartY, 100, degToRad(10)));
 }
 
-function pathStuff(y, r, viewAngle) {
+function upperSphereSection(y, r, viewAngle) {
   const x = Math.sqrt(r**2 - y**2);
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
@@ -76,7 +76,7 @@ function pathStuff(y, r, viewAngle) {
   return [circlePath, ellipsePath].join(' ')
 }
 
-function otherPathStuff(y, r, viewAngle) {
+function lowerSphereSection(y, r, viewAngle) {
   const x = Math.sqrt(r**2 - y**2);
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
