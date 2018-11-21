@@ -12,15 +12,15 @@ svg.setAttribute('style', 'width: 300px; height: 300px;');
 
 const bottomSection = document.createElementNS(svgNS, 'path');
 
-bottomSection.setAttribute('stroke', 'black');
+bottomSection.setAttribute('stroke', 'white');
 bottomSection.setAttribute('fill', 'none');
 
 svg.appendChild(bottomSection);
 
 const topSection = document.createElementNS(svgNS, 'path');
 
-topSection.setAttribute('stroke', 'black');
-topSection.setAttribute('fill', 'white');
+topSection.setAttribute('stroke', 'white');
+topSection.setAttribute('fill', 'black');
 
 render();
 
@@ -30,11 +30,24 @@ svg.appendChild(topSection);
 root.appendChild(svg);
 
 
-function render(t) {
-  const bandStartY = 20;
-  const bandThickness = 30;
 
-  bottomSection.setAttribute('d', otherPathStuff(bandStartY+bandThickness, 100, degToRad(10)));
+requestAnimationFrame(animate);
+
+function animate(t) {
+  render(t);
+  requestAnimationFrame(animate);
+}
+
+function render(t) {
+  const bandMovementRange = 10;
+
+  const yBasis = 20;
+  const bandStartY = yBasis + Math.sin(t / 4000 * 2 * Math.PI) * bandMovementRange;
+
+  const bandThickness = 30;
+  const bandEndY = yBasis + bandThickness +  Math.sin((t + 250) / 4000 * 2 * Math.PI) * bandMovementRange;
+
+  bottomSection.setAttribute('d', otherPathStuff(bandEndY, 100, degToRad(10)));
   topSection.setAttribute('d', pathStuff(bandStartY, 100, degToRad(10)));
 }
 
