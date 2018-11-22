@@ -1,9 +1,7 @@
-const root = document.querySelector('#root');
+import * as Diagram from './src/diagram';
+import createSVGElement from "./src/createSvgElement";
 
-function createSVGElement(tagName) {
-  const svgNS = 'http://www.w3.org/2000/svg';
-  return document.createElementNS(svgNS, tagName);
-}
+const root = document.querySelector('#root');
 
 const svg = createSVGElement('svg');
 // wtf is this shit
@@ -37,31 +35,12 @@ svg.appendChild(topSection);
 
 // -----
 
-const diagramSvg = createSVGElement('svg');
-diagramSvg.setAttribute('viewBox', '-201 -201 402 402');
-diagramSvg.setAttribute('style', 'width: 400px; height: 400px;');
-
-const diagramTopSlice = createSVGElement('path');
-diagramTopSlice.setAttribute('stroke', 'white');
-diagramTopSlice.setAttribute('stroke-width', 2);
-diagramTopSlice.setAttribute('fill', 'none');
-
-const diagramBottomSlice = createSVGElement('path');
-diagramBottomSlice.setAttribute('stroke', 'white');
-diagramBottomSlice.setAttribute('stroke-width', 2);
-diagramBottomSlice.setAttribute('fill', 'none');
-
-const group = createSVGElement('g');
-
-group.appendChild(diagramTopSlice);
-group.appendChild(diagramBottomSlice);
-
-diagramSvg.appendChild(group);
-
+const diagramElements = Diagram.createElements();
 
 root.appendChild(svg);
-// root.appendChild(diagramSvg);
+root.appendChild(diagramElements.diagramSvg);
 
+// -----
 
 requestAnimationFrame(animate);
 
@@ -91,9 +70,7 @@ function getPositions(t) {
 function render({bandStartY, bandEndY, r, viewAngle}) {
   updateOrb({bandStartY, bandEndY, r, viewAngle});
 
-  group.setAttribute('transform', `rotate(${-viewAngle})`);
-  diagramTopSlice.setAttribute('d', slice1(doOtherCalc({y: bandStartY, r})));
-  diagramBottomSlice.setAttribute('d', slice2(doOtherCalc({y: bandEndY, r})));
+  Diagram.update(diagramElements, {viewAngle, bandStartY, bandEndY, r})
 }
 
 function updateOrb({bandStartY, bandEndY, r, viewAngle}) {
@@ -102,29 +79,6 @@ function updateOrb({bandStartY, bandEndY, r, viewAngle}) {
   bottomSection.setAttribute('d', lowerSphereSection(doCalc({yPrime: bandEndY, r, viewAngle: viewAngleRad})));
   topSection.setAttribute('d', upperSphereSection(doCalc({yPrime: bandStartY, r, viewAngle: viewAngleRad})));
   disc.setAttribute('d', sphereSlice(doCalc({yPrime: bandEndY, r, viewAngle: viewAngleRad})));
-}
-
-function slice1({r, sliceR, y}) {
-  if (y < 0) {
-    return `M ${-sliceR} ${y} L ${sliceR} ${y} A ${r} ${r} 0 0 0 ${-sliceR} ${y}`
-  }
-
-  return `M ${-sliceR} ${y} L ${sliceR} ${y} A ${r} ${r} 0 1 0 ${-sliceR} ${y}`
-}
-
-function slice2({r, sliceR, y}) {
-  if (y < 0) {
-    return `M ${-sliceR} ${y} L ${sliceR} ${y} A ${r} ${r} 0 1 1 ${-sliceR} ${y}`
-  }
-
-  return `M ${-sliceR} ${y} L ${sliceR} ${y} A ${r} ${r} 0 0 1 ${-sliceR} ${y}`
-}
-
-
-function doOtherCalc({y, r}) {
-  const sliceR = Math.sqrt(r ** 2 - y ** 2);
-
-  return {y, r, sliceR};
 }
 
 function doCalc({yPrime, r, viewAngle}) {
