@@ -3,6 +3,9 @@ import compose from "./compose";
 import withAnimation from "./withAnimation";
 import withVelocity from "./withVelocity";
 
+const fill = '#141414';
+// const fill = '#BE2222';
+
 const r = 200;
 
 const mix = (a, b, mix) => a * mix + b * (1 - mix);
@@ -132,8 +135,7 @@ const TopSphereSection = ({endY, r, viewAngle}) => (
     d: upperSphereSection(doCalc({yPrime: endY, r, viewAngle: degToRad(viewAngle)})),
     stroke: 'white',
     strokeWidth: 3,
-    // fill: '#141414'
-    fill: '#BE2222'
+    fill
   }}/>
 );
 
@@ -142,8 +144,7 @@ const BottomSphereSection = ({endY, r, viewAngle}) => (
     d: lowerSphereSection(doCalc({yPrime: endY, r, viewAngle: degToRad(viewAngle)})),
     stroke: 'white',
     strokeWidth: 3,
-    // fill: '#141414'
-    fill: '#BE2222'
+    fill
   }}/>
 );
 
