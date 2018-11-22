@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import compose from "./src/compose";
 import withAnimation from "./src/withAnimation";
+import withVelocity from "./src/withVelocity";
 
 const root = document.querySelector('#root');
 
@@ -46,31 +47,6 @@ const withMouseControl = Wrapped => class WithMouseControl extends React.Compone
     }}/>
   }
 };
-
-const withVelocity = Wrapped => class WithVelocity extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.viewAngle = 0;
-  }
-
-  componentDidMount() {
-    this.handle = setInterval(() => {
-      const {viewAngle} = this.props;
-      this.viewAngle += (viewAngle - this.viewAngle) / 20;
-    }, 10)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.handle)
-  }
-
-  render() {
-    return (
-      <Wrapped {...this.props} {...{viewAngle: this.viewAngle}}/>
-    )
-  }
-}
 
 const withPeriodicStuff = Wrapped => (props) => {
   const {t} = props;
@@ -169,7 +145,7 @@ const Orb = compose(
   withAnimation,
   withPeriodicStuff,
   withMouseControl,
-  withVelocity,
+  withVelocity(['viewAngle']),
 )(SliceOrb);
 
 ReactDOM.render(<Orb/>, root);
