@@ -1,40 +1,52 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import compose from "./src/compose";
+import withAnimation from "./src/withAnimation";
 
 const root = document.querySelector('#root');
 
-const withAnimation = Wrapped => class WithAnimation extends React.Component {
+const r = 200;
+
+const mix = (a, b, mix) => a * mix + b * (1 - mix);
+
+const withMouseControl = Wrapped => class WithMouseControl extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      t: 0
-    };
+    this.mouseX = 0;
+    this.mouseY = 0;
+
+    this.handleMouseMove = (event) => {
+      this.mouseX = event.clientX;
+      this.mouseY = event.clientY;
+    }
   }
 
   componentDidMount() {
-    const update = t => this.setState({t});
-
-    const loop = t => {
-      update(t);
-      this.rafHandle = requestAnimationFrame(loop);
-    };
-
-    loop()
+    document.addEventListener('mousemove', this.handleMouseMove);
   }
 
   componentWillUnmount() {
-    cancelAnimationFrame(this.rafHandle);
+    document.removeEventListener('mousemove', this.handleMouseMove);
   }
 
   render() {
-    return <Wrapped {...this.props} t={this.state.t}/>
+    const {t} = this.props;
+    const yFactor = 2 * (window.innerHeight / 2 - this.mouseY) / window.innerHeight;
+    const xFactor = Math.abs(2 * (window.innerWidth / 2 - this.mouseX) / window.innerWidth);
+
+    const viewAngle = mix(Math.sin(t / (16000 * 4) * 2 * Math.PI) * 10, -30 * yFactor, xFactor);
+
+    return <Wrapped {...{
+      ...this.props,
+      viewAngle,
+      xFactor
+    }}/>
   }
 };
 
-const r = 200;
-
-const withPeriodicStuff = Wrapped => ({t}) => {
+const withPeriodicStuff = Wrapped => (props) => {
+  const {t} = props;
   const period = 16000;
 
   const viewAngle = Math.sin(t / (period * 4) * 2 * Math.PI) * 30;
@@ -49,9 +61,9 @@ const withPeriodicStuff = Wrapped => ({t}) => {
   const bandEndY = yBasis + bandThickness + Math.sin((t + period / 8) / period * 2 * Math.PI) * bandMovementRange;
 
   return (
-    <Wrapped {...{bandEndY, bandStartY, viewAngle}}/>
+    <Wrapped {...props} {...{bandEndY, bandStartY, viewAngle}}/>
   )
-}
+};
 
 const SliceOrb = ({viewAngle, bandStartY, bandEndY}) => {
   if (viewAngle < 0) {
@@ -97,7 +109,7 @@ const SliceOrb = ({viewAngle, bandStartY, bandEndY}) => {
       }}/>
     </svg>
   )
-}
+};
 
 const TopSphereSection = ({endY, r, viewAngle}) => (
   <path {...{
@@ -126,7 +138,11 @@ const SphereSlice = ({y, r, viewAngle}) => (
   }}/>
 );
 
-const Orb = withAnimation(withPeriodicStuff(SliceOrb));
+const Orb = compose(
+  withAnimation,
+  withPeriodicStuff,
+  withMouseControl,
+)(SliceOrb);
 
 ReactDOM.render(<Orb/>, root);
 
