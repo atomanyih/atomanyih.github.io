@@ -16,9 +16,9 @@ const App = () => {
         </h1>
       </div>
       <div className="name-layer">
-        <div className="name">
+        <a className="name" href="https://github.com/atomanyih" target="_blank">
           August Toman-Yih
-        </div>
+        </a>
       </div>
     </div>
   )
