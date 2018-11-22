@@ -1,85 +1,125 @@
-import * as Diagram from './src/diagram';
-import createSVGElement from "./src/createSvgElement";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 const root = document.querySelector('#root');
 
-const svg = createSVGElement('svg');
-// wtf is this shit
-// https://stackoverflow.com/questions/28734628/how-can-i-set-an-attribute-with-case-sensitive-name-in-a-javascript-generated-el
 
-svg.setAttribute('viewBox', '-201 -201 402 402');
-svg.setAttribute('style', 'width: 400px; height: 400px;');
+class Orb extends React.Component {
+  constructor(props) {
+    super(props)
 
+    this.state = {
+      t: 0
+    };
+  }
 
-const bottomSection = createSVGElement('path');
+  componentDidMount() {
+    const update = t => this.setState({t});
 
-bottomSection.setAttribute('stroke', 'white');
-bottomSection.setAttribute('stroke-width', '2');
-bottomSection.setAttribute('fill', 'none');
+    const loop = t => {
+      update(t);
+      this.rafHandle = requestAnimationFrame(loop);
+    };
 
+    loop()
+  }
 
-const topSection = createSVGElement('path');
+  componentWillUnmount() {
+    cancelAnimationFrame(this.rafHandle);
+  }
 
-topSection.setAttribute('stroke', 'white');
-topSection.setAttribute('stroke-width', '2');
-topSection.setAttribute('fill', '#141414');
+  render() {
+    const {t} = this.state;
 
-const disc = createSVGElement('path');
+    const r = 200;
+    const period = 16000;
 
-disc.setAttribute('stroke', 'white');
-disc.setAttribute('fill', 'none');
+    const viewAngle = Math.sin(t / (period * 4) * 2 * Math.PI) * 30;
 
-svg.appendChild(bottomSection);
-svg.appendChild(disc);
-svg.appendChild(topSection);
+    const bandMovementRange = r / 10;
+    const bandThickness = r / 10 * 5;
 
-// -----
+    const yBasis = 0;
 
-const diagramElements = Diagram.createElements();
+    const bandStartY = yBasis + Math.sin(t / period * 2 * Math.PI) * bandMovementRange;
 
-root.appendChild(svg);
-root.appendChild(diagramElements.diagramSvg);
+    const bandEndY = yBasis + bandThickness + Math.sin((t + period / 8) / period * 2 * Math.PI) * bandMovementRange;
 
-// -----
+    if(viewAngle < 0) {
+      return (
+        <svg viewBox="-201 -201 402 402" style={{width: 400, height: 400}}>
+          <TopSphereSection {...{
+            endY: bandStartY,
+            r,
+            viewAngle
+          }}/>
 
-requestAnimationFrame(animate);
+          <SphereSlice {...{
+            y: bandStartY,
+            r,
+            viewAngle
+          }}/>
 
-function animate(t) {
-  render(getPositions(t));
-  requestAnimationFrame(animate);
+          <BottomSphereSection {...{
+            endY: bandEndY,
+            r,
+            viewAngle
+          }}/>
+        </svg>
+      )
+    }
+
+    return (
+      <svg viewBox="-201 -201 402 402" style={{width: 400, height: 400}}>
+        <BottomSphereSection {...{
+          endY: bandEndY,
+          r,
+          viewAngle
+        }}/>
+        <SphereSlice {...{
+          y: bandEndY,
+          r,
+          viewAngle
+        }}/>
+        <TopSphereSection {...{
+          endY: bandStartY,
+          r,
+          viewAngle
+        }}/>
+      </svg>
+    )
+  }
 }
 
-function getPositions(t) {
-  const r = 200;
-  const period = 16000;
+const TopSphereSection = ({endY, r, viewAngle}) => (
+  <path {...{
+    d: upperSphereSection(doCalc({yPrime: endY, r, viewAngle: degToRad(viewAngle)})),
+    stroke: 'white',
+    strokeWidth: 2,
+    fill: '#141414'
+  }}/>
+);
 
-  const viewAngle = 15 + Math.sin(t / (period * 4) * 2 * Math.PI) * 10;
+const BottomSphereSection = ({endY, r, viewAngle}) => (
+  <path {...{
+    d: lowerSphereSection(doCalc({yPrime: endY, r, viewAngle: degToRad(viewAngle)})),
+    stroke: 'white',
+    strokeWidth: 2,
+    fill: '#141414'
+  }}/>
+);
 
-  const bandMovementRange = r / 10;
-  const bandThickness = r / 10 * 5;
+const SphereSlice = ({y, r, viewAngle}) => (
+  <path {...{
+    d: sphereSlice(doCalc({yPrime: y, r, viewAngle: degToRad(viewAngle)})),
+    stroke: 'white',
+    strokeWidth: 1,
+    fill: 'none'
+  }}/>
+)
 
-  const yBasis = 0;
+ReactDOM.render(<Orb/>, root);
 
-  const bandStartY = yBasis + Math.sin(t / period * 2 * Math.PI) * bandMovementRange;
-
-  const bandEndY = yBasis + bandThickness + Math.sin((t + period / 8) / period * 2 * Math.PI) * bandMovementRange;
-
-  return {bandStartY, bandEndY, r, viewAngle};
-}
-
-function render({bandStartY, bandEndY, r, viewAngle}) {
-  updateOrb({bandStartY, bandEndY, r, viewAngle});
-
-  Diagram.update(diagramElements, {viewAngle, bandStartY, bandEndY, r})
-}
-
-function updateOrb({bandStartY, bandEndY, r, viewAngle}) {
-  const viewAngleRad = degToRad(viewAngle);
-
-  bottomSection.setAttribute('d', lowerSphereSection(doCalc({yPrime: bandEndY, r, viewAngle: viewAngleRad})));
-  topSection.setAttribute('d', upperSphereSection(doCalc({yPrime: bandStartY, r, viewAngle: viewAngleRad})));
-  disc.setAttribute('d', sphereSlice(doCalc({yPrime: bandEndY, r, viewAngle: viewAngleRad})));
-}
 
 function doCalc({yPrime, r, viewAngle}) {
   const y = yPrime / Math.cos(viewAngle);
