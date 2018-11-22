@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom';
 
 const root = document.querySelector('#root');
 
-
-class Orb extends React.Component {
+const withAnimation = Wrapped => class WithAnimation extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       t: 0
@@ -29,66 +28,75 @@ class Orb extends React.Component {
   }
 
   render() {
-    const {t} = this.state;
+    return <Wrapped {...this.props} t={this.state.t}/>
+  }
+};
 
-    const r = 200;
-    const period = 16000;
+const r = 200;
 
-    const viewAngle = Math.sin(t / (period * 4) * 2 * Math.PI) * 30;
+const withPeriodicStuff = Wrapped => ({t}) => {
+  const period = 16000;
 
-    const bandMovementRange = r / 10;
-    const bandThickness = r / 10 * 5;
+  const viewAngle = Math.sin(t / (period * 4) * 2 * Math.PI) * 30;
 
-    const yBasis = 0;
+  const bandMovementRange = r / 10;
+  const bandThickness = r / 10 * 5;
 
-    const bandStartY = yBasis + Math.sin(t / period * 2 * Math.PI) * bandMovementRange;
+  const yBasis = 0;
 
-    const bandEndY = yBasis + bandThickness + Math.sin((t + period / 8) / period * 2 * Math.PI) * bandMovementRange;
+  const bandStartY = yBasis + Math.sin(t / period * 2 * Math.PI) * bandMovementRange;
 
-    if(viewAngle < 0) {
-      return (
-        <svg viewBox="-201 -201 402 402" style={{width: 400, height: 400}}>
-          <TopSphereSection {...{
-            endY: bandStartY,
-            r,
-            viewAngle
-          }}/>
+  const bandEndY = yBasis + bandThickness + Math.sin((t + period / 8) / period * 2 * Math.PI) * bandMovementRange;
 
-          <SphereSlice {...{
-            y: bandStartY,
-            r,
-            viewAngle
-          }}/>
+  return (
+    <Wrapped {...{bandEndY, bandStartY, viewAngle}}/>
+  )
+}
 
-          <BottomSphereSection {...{
-            endY: bandEndY,
-            r,
-            viewAngle
-          }}/>
-        </svg>
-      )
-    }
-
+const SliceOrb = ({viewAngle, bandStartY, bandEndY}) => {
+  if (viewAngle < 0) {
     return (
       <svg viewBox="-201 -201 402 402" style={{width: 400, height: 400}}>
-        <BottomSphereSection {...{
-          endY: bandEndY,
-          r,
-          viewAngle
-        }}/>
-        <SphereSlice {...{
-          y: bandEndY,
-          r,
-          viewAngle
-        }}/>
         <TopSphereSection {...{
           endY: bandStartY,
+          r,
+          viewAngle
+        }}/>
+
+        <SphereSlice {...{
+          y: bandStartY,
+          r,
+          viewAngle
+        }}/>
+
+        <BottomSphereSection {...{
+          endY: bandEndY,
           r,
           viewAngle
         }}/>
       </svg>
     )
   }
+
+  return (
+    <svg viewBox="-201 -201 402 402" style={{width: 400, height: 400}}>
+      <BottomSphereSection {...{
+        endY: bandEndY,
+        r,
+        viewAngle
+      }}/>
+      <SphereSlice {...{
+        y: bandEndY,
+        r,
+        viewAngle
+      }}/>
+      <TopSphereSection {...{
+        endY: bandStartY,
+        r,
+        viewAngle
+      }}/>
+    </svg>
+  )
 }
 
 const TopSphereSection = ({endY, r, viewAngle}) => (
@@ -116,7 +124,9 @@ const SphereSlice = ({y, r, viewAngle}) => (
     strokeWidth: 1,
     fill: 'none'
   }}/>
-)
+);
+
+const Orb = withAnimation(withPeriodicStuff(SliceOrb));
 
 ReactDOM.render(<Orb/>, root);
 
