@@ -24,7 +24,7 @@ const topSection = createSVGElement('path');
 
 topSection.setAttribute('stroke', 'white');
 topSection.setAttribute('stroke-width', '2');
-topSection.setAttribute('fill', 'black');
+topSection.setAttribute('fill', '#141414');
 
 const disc = createSVGElement('path');
 
@@ -79,7 +79,7 @@ function animate(t) {
 
 function render(t) {
   const r = 200;
-  const period = 8000;
+  const period = 16000;
 
   const viewAngleDeg = 15 + Math.sin(t / (period * 4) * 2 * Math.PI) * 10;
   const viewAngleRad = degToRad(viewAngleDeg);
@@ -91,7 +91,7 @@ function render(t) {
 
   const bandStartY = yBasis + Math.sin(t / period * 2 * Math.PI) * bandMovementRange;
 
-  const bandEndY = yBasis + bandThickness + Math.sin((t + 1000) / period * 2 * Math.PI) * bandMovementRange;
+  const bandEndY = yBasis + bandThickness + Math.sin((t + period / 8) / period * 2 * Math.PI) * bandMovementRange;
 
   bottomSection.setAttribute('d', lowerSphereSection(doCalc({yPrime: bandEndY, r, viewAngle: viewAngleRad})));
   topSection.setAttribute('d', upperSphereSection(doCalc({yPrime: bandStartY, r, viewAngle: viewAngleRad})));
