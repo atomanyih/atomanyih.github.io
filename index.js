@@ -41,12 +41,6 @@ const diagramSvg = createSVGElement('svg');
 diagramSvg.setAttribute('viewBox', '-201 -201 402 402');
 diagramSvg.setAttribute('style', 'width: 400px; height: 400px;');
 
-// const diagramCircle = document.createElementNS(svgNS, 'circle');
-// diagramCircle.setAttribute('stroke', 'white');
-// diagramCircle.setAttribute('stroke-width', 2);
-// diagramCircle.setAttribute('fill', 'none');
-// diagramCircle.setAttribute('r', 200);
-
 const diagramTopSlice = createSVGElement('path');
 diagramTopSlice.setAttribute('stroke', 'white');
 diagramTopSlice.setAttribute('stroke-width', 2);
@@ -59,7 +53,6 @@ diagramBottomSlice.setAttribute('fill', 'none');
 
 const group = createSVGElement('g');
 
-// group.appendChild(diagramCircle);
 group.appendChild(diagramTopSlice);
 group.appendChild(diagramBottomSlice);
 
@@ -73,16 +66,15 @@ root.appendChild(svg);
 requestAnimationFrame(animate);
 
 function animate(t) {
-  render(t);
+  render(getPositions(t));
   requestAnimationFrame(animate);
 }
 
-function render(t) {
+function getPositions(t) {
   const r = 200;
   const period = 16000;
 
-  const viewAngleDeg = 15 + Math.sin(t / (period * 4) * 2 * Math.PI) * 10;
-  const viewAngleRad = degToRad(viewAngleDeg);
+  const viewAngle = 15 + Math.sin(t / (period * 4) * 2 * Math.PI) * 10;
 
   const bandMovementRange = r / 10;
   const bandThickness = r / 10 * 5;
@@ -93,13 +85,23 @@ function render(t) {
 
   const bandEndY = yBasis + bandThickness + Math.sin((t + period / 8) / period * 2 * Math.PI) * bandMovementRange;
 
+  return {bandStartY, bandEndY, r, viewAngle};
+}
+
+function render({bandStartY, bandEndY, r, viewAngle}) {
+  updateOrb({bandStartY, bandEndY, r, viewAngle});
+
+  group.setAttribute('transform', `rotate(${-viewAngle})`);
+  diagramTopSlice.setAttribute('d', slice1(doOtherCalc({y: bandStartY, r})));
+  diagramBottomSlice.setAttribute('d', slice2(doOtherCalc({y: bandEndY, r})));
+}
+
+function updateOrb({bandStartY, bandEndY, r, viewAngle}) {
+  const viewAngleRad = degToRad(viewAngle);
+
   bottomSection.setAttribute('d', lowerSphereSection(doCalc({yPrime: bandEndY, r, viewAngle: viewAngleRad})));
   topSection.setAttribute('d', upperSphereSection(doCalc({yPrime: bandStartY, r, viewAngle: viewAngleRad})));
   disc.setAttribute('d', sphereSlice(doCalc({yPrime: bandEndY, r, viewAngle: viewAngleRad})));
-
-  group.setAttribute('transform', `rotate(${-viewAngleDeg})`);
-  diagramTopSlice.setAttribute('d', slice1(doOtherCalc({y: bandStartY, r})));
-  diagramBottomSlice.setAttribute('d', slice2(doOtherCalc({y: bandEndY, r})));
 }
 
 function slice1({r, sliceR, y}) {
