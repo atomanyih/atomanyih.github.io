@@ -28,14 +28,43 @@ const disc = document.createElementNS(svgNS, 'path');
 disc.setAttribute('stroke', 'white');
 disc.setAttribute('fill', 'none');
 
-render(0);
-
 svg.appendChild(bottomSection);
 svg.appendChild(disc);
 svg.appendChild(topSection);
 
-root.appendChild(svg);
+// -----
 
+const diagramSvg = document.createElementNS(svgNS, 'svg');
+diagramSvg.setAttribute('viewBox', '-201 -201 402 402');
+diagramSvg.setAttribute('style', 'width: 400px; height: 400px;');
+
+// const diagramCircle = document.createElementNS(svgNS, 'circle');
+// diagramCircle.setAttribute('stroke', 'white');
+// diagramCircle.setAttribute('stroke-width', 2);
+// diagramCircle.setAttribute('fill', 'none');
+// diagramCircle.setAttribute('r', 200);
+
+const diagramTopSlice = document.createElementNS(svgNS, 'path');
+diagramTopSlice.setAttribute('stroke', 'white');
+diagramTopSlice.setAttribute('stroke-width', 2);
+diagramTopSlice.setAttribute('fill', 'none');
+
+const diagramBottomSlice = document.createElementNS(svgNS, 'path');
+diagramBottomSlice.setAttribute('stroke', 'white');
+diagramBottomSlice.setAttribute('stroke-width', 2);
+diagramBottomSlice.setAttribute('fill', 'none');
+
+const group = document.createElementNS(svgNS, 'g');
+
+// group.appendChild(diagramCircle);
+group.appendChild(diagramTopSlice);
+group.appendChild(diagramBottomSlice);
+
+diagramSvg.appendChild(group);
+
+
+root.appendChild(svg);
+root.appendChild(diagramSvg);
 
 
 requestAnimationFrame(animate);
@@ -49,26 +78,54 @@ function render(t) {
   const r = 200;
   const period = 8000;
 
-  const viewAngle = degToRad(15 + Math.sin(t / (period * 4) * 2 * Math.PI) * 10);
+  const viewAngleDeg = 15 + Math.sin(t / (period * 4) * 2 * Math.PI) * 10;
+  const viewAngleRad = degToRad(viewAngleDeg);
 
-  const bandMovementRange = r/10;
-  const bandThickness = r/10 * 5;
+  const bandMovementRange = r / 10;
+  const bandThickness = r / 10 * 5;
 
   const yBasis = 0;
 
   const bandStartY = yBasis + Math.sin(t / period * 2 * Math.PI) * bandMovementRange;
 
-  const bandEndY = yBasis + bandThickness +  Math.sin((t + 1000) / period * 2 * Math.PI) * bandMovementRange;
+  const bandEndY = yBasis + bandThickness + Math.sin((t + 1000) / period * 2 * Math.PI) * bandMovementRange;
 
-  bottomSection.setAttribute('d', lowerSphereSection(doCalc({yPrime: bandEndY, r, viewAngle})));
-  topSection.setAttribute('d', upperSphereSection(doCalc({yPrime: bandStartY, r, viewAngle})));
-  disc.setAttribute('d', sphereSlice(doCalc({yPrime: bandEndY, r, viewAngle})));
+  bottomSection.setAttribute('d', lowerSphereSection(doCalc({yPrime: bandEndY, r, viewAngle: viewAngleRad})));
+  topSection.setAttribute('d', upperSphereSection(doCalc({yPrime: bandStartY, r, viewAngle: viewAngleRad})));
+  disc.setAttribute('d', sphereSlice(doCalc({yPrime: bandEndY, r, viewAngle: viewAngleRad})));
+
+  group.setAttribute('transform', `rotate(${-viewAngleDeg})`);
+  diagramTopSlice.setAttribute('d', slice1(doOtherCalc({y: bandStartY, r})));
+  diagramBottomSlice.setAttribute('d', slice2(doOtherCalc({y: bandEndY, r})));
+}
+
+function slice1({r, sliceR, y}) {
+  if (y < 0) {
+    return `M ${-sliceR} ${y} L ${sliceR} ${y} A ${r} ${r} 0 0 0 ${-sliceR} ${y}`
+  }
+
+  return `M ${-sliceR} ${y} L ${sliceR} ${y} A ${r} ${r} 0 1 0 ${-sliceR} ${y}`
+}
+
+function slice2({r, sliceR, y}) {
+  if (y < 0) {
+    return `M ${-sliceR} ${y} L ${sliceR} ${y} A ${r} ${r} 0 1 1 ${-sliceR} ${y}`
+  }
+
+  return `M ${-sliceR} ${y} L ${sliceR} ${y} A ${r} ${r} 0 0 1 ${-sliceR} ${y}`
+}
+
+
+function doOtherCalc({y, r}) {
+  const sliceR = Math.sqrt(r ** 2 - y ** 2);
+
+  return {y, r, sliceR};
 }
 
 function doCalc({yPrime, r, viewAngle}) {
   const y = yPrime / Math.cos(viewAngle);
-  const x = Math.sqrt(r**2 - y**2);
-  const rx = Math.sqrt(r**2 - yPrime**2);
+  const x = Math.sqrt(r ** 2 - y ** 2);
+  const rx = Math.sqrt(r ** 2 - yPrime ** 2);
   const ry = rx * Math.sin(viewAngle);
 
   return {x, y, r, rx, ry}
@@ -77,7 +134,7 @@ function doCalc({yPrime, r, viewAngle}) {
 function upperSphereSection({x, y, r, rx, ry}) {
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
 
-  if(y < 0) {
+  if (y < 0) {
     const circlePath = `M ${-x} ${y} A ${r} ${r} 0 0 1 ${x} ${y}`;
     const ellipsePath = `A ${rx} ${ry} 0 1 1 ${-x} ${y}`;
 
@@ -94,7 +151,7 @@ function lowerSphereSection({x, y, r, rx, ry}) {
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
 
-  if(y < 0) {
+  if (y < 0) {
     const circlePath = `M ${-x} ${y} A ${r} ${r} 0 1 0 ${x} ${y}`;
     const ellipsePath = `A ${rx} ${ry} 0 0 0 ${-x} ${y}`;
 
@@ -112,7 +169,7 @@ function sphereSlice({x, y, r, rx, ry}) {
 
   // A rx ry x-axis-rotation large-arc-flag sweep-flag x y
 
-  if(y > 0) {
+  if (y > 0) {
     // why is this still necessary?
     // why is the large arc flag reversed?
     // I think maybe bc I'm drawing now the top part of the ellipse first
@@ -130,5 +187,5 @@ function sphereSlice({x, y, r, rx, ry}) {
 }
 
 function degToRad(deg) {
-  return deg/180 * Math.PI
+  return deg / 180 * Math.PI
 }
