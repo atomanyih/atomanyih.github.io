@@ -1,8 +1,11 @@
 const root = document.querySelector('#root');
 
-const svgNS = 'http://www.w3.org/2000/svg';
+function createSVGElement(tagName) {
+  const svgNS = 'http://www.w3.org/2000/svg';
+  return document.createElementNS(svgNS, tagName);
+}
 
-const svg = document.createElementNS(svgNS, 'svg');
+const svg = createSVGElement('svg');
 // wtf is this shit
 // https://stackoverflow.com/questions/28734628/how-can-i-set-an-attribute-with-case-sensitive-name-in-a-javascript-generated-el
 
@@ -10,20 +13,20 @@ svg.setAttribute('viewBox', '-201 -201 402 402');
 svg.setAttribute('style', 'width: 400px; height: 400px;');
 
 
-const bottomSection = document.createElementNS(svgNS, 'path');
+const bottomSection = createSVGElement('path');
 
 bottomSection.setAttribute('stroke', 'white');
 bottomSection.setAttribute('stroke-width', '2');
 bottomSection.setAttribute('fill', 'none');
 
 
-const topSection = document.createElementNS(svgNS, 'path');
+const topSection = createSVGElement('path');
 
 topSection.setAttribute('stroke', 'white');
 topSection.setAttribute('stroke-width', '2');
 topSection.setAttribute('fill', 'black');
 
-const disc = document.createElementNS(svgNS, 'path');
+const disc = createSVGElement('path');
 
 disc.setAttribute('stroke', 'white');
 disc.setAttribute('fill', 'none');
@@ -34,7 +37,7 @@ svg.appendChild(topSection);
 
 // -----
 
-const diagramSvg = document.createElementNS(svgNS, 'svg');
+const diagramSvg = createSVGElement('svg');
 diagramSvg.setAttribute('viewBox', '-201 -201 402 402');
 diagramSvg.setAttribute('style', 'width: 400px; height: 400px;');
 
@@ -44,17 +47,17 @@ diagramSvg.setAttribute('style', 'width: 400px; height: 400px;');
 // diagramCircle.setAttribute('fill', 'none');
 // diagramCircle.setAttribute('r', 200);
 
-const diagramTopSlice = document.createElementNS(svgNS, 'path');
+const diagramTopSlice = createSVGElement('path');
 diagramTopSlice.setAttribute('stroke', 'white');
 diagramTopSlice.setAttribute('stroke-width', 2);
 diagramTopSlice.setAttribute('fill', 'none');
 
-const diagramBottomSlice = document.createElementNS(svgNS, 'path');
+const diagramBottomSlice = createSVGElement('path');
 diagramBottomSlice.setAttribute('stroke', 'white');
 diagramBottomSlice.setAttribute('stroke-width', 2);
 diagramBottomSlice.setAttribute('fill', 'none');
 
-const group = document.createElementNS(svgNS, 'g');
+const group = createSVGElement('g');
 
 // group.appendChild(diagramCircle);
 group.appendChild(diagramTopSlice);
@@ -64,7 +67,7 @@ diagramSvg.appendChild(group);
 
 
 root.appendChild(svg);
-root.appendChild(diagramSvg);
+// root.appendChild(diagramSvg);
 
 
 requestAnimationFrame(animate);
