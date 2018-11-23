@@ -2,7 +2,7 @@ import React from 'react';
 import compose from "./compose";
 import withAnimation from "./withAnimation";
 import withVelocity from "./withVelocity";
-import {BottomSphereSection, SphereSlice, TopSphereSection} from "./SphereSections";
+import {BottomSphereSection, SpherePatty, SphereSlice, TopSphereSection} from "./SphereSections";
 
 // const fill = '#BE2222';
 
@@ -99,6 +99,15 @@ const SliceOrb = ({viewAngle, bandStartY, bandEndY}) => {
                 viewAngle
               }}/>
 
+              {/*
+              <Patty {...{
+                y0: bandStartY + 20,
+                y1: bandEndY - 20,
+                r,
+                viewAngle
+              }}/>
+              */}
+
               <BottomSphereSection {...{
                 endY: bandEndY,
                 r,
@@ -118,6 +127,16 @@ const SliceOrb = ({viewAngle, bandStartY, bandEndY}) => {
                 r,
                 viewAngle
               }}/>
+
+              {/*
+              <Patty {...{
+                y0: bandStartY + 20,
+                y1: bandEndY - 20,
+                r,
+                viewAngle
+              }}/>
+              */}
+
               <TopSphereSection {...{
                 endY: bandStartY,
                 r,
@@ -129,6 +148,23 @@ const SliceOrb = ({viewAngle, bandStartY, bandEndY}) => {
     </svg>
   )
 };
+
+
+const Patty = ({y0, y1, r, viewAngle}) => (
+  <React.Fragment>
+    <SpherePatty {...{
+      y0,
+      y1,
+      r,
+      viewAngle
+    }}/>
+    <SphereSlice {...{
+      y: viewAngle < 0 ? y1 : y0,
+      r,
+      viewAngle
+    }}/>
+  </React.Fragment>
+);
 
 
 const Orb = compose(

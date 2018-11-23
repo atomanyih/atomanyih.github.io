@@ -28,6 +28,18 @@ const SphereSlice = ({y, r, viewAngle}) => (
   }}/>
 );
 
+const SpherePatty = ({y0, y1, r, viewAngle}) => (
+  <path {...{
+    d: spherePatty(
+      doCalc({yPrime: y0, r, viewAngle: degToRad(viewAngle)}),
+      doCalc({yPrime: y1, r, viewAngle: degToRad(viewAngle)}),
+    ),
+    stroke: 'white',
+    strokeWidth: 3,
+    fill
+  }}/>
+);
+
 function doCalc({yPrime, r, viewAngle}) {
   const y = yPrime / Math.cos(viewAngle);
   const x = Math.sqrt(r ** 2 - y ** 2);
@@ -35,6 +47,25 @@ function doCalc({yPrime, r, viewAngle}) {
   const ry = rx * Math.sin(viewAngle);
 
   return {x, y, r, rx, ry}
+}
+
+function spherePatty(calc0, calc1) {
+  const {
+    x: x0, y: y0, r, rx: rx0, ry: ry0
+  } = calc0;
+
+  const {
+    x: x1, y: y1, rx: rx1, ry: ry1
+  } = calc1;
+
+  return [
+    `M ${-x0} ${y0}`, // startPath
+    `A ${rx0} ${ry0} 0 ${y0 < 0 ? 0 : 1} 1 ${x0} ${y0}`, // topSlicePath
+    `A ${r} ${r} 0 0 1 ${x1} ${y1}`, // rightCirclePath
+    `A ${rx1} ${ry1} 0 ${y0 < 0 ? 1 : 0} 1 ${-x1} ${y1}`, // bottomSlicePath
+    `A ${r} ${r} 0 0 1 ${-x0} ${y0}`, // leftCirclePath
+    'Z',
+  ].join(' ')
 }
 
 function upperSphereSection({x, y, r, rx, ry}) {
@@ -96,4 +127,4 @@ function degToRad(deg) {
   return deg / 180 * Math.PI
 }
 
-export {TopSphereSection, BottomSphereSection, SphereSlice}
+export {TopSphereSection, BottomSphereSection, SphereSlice, SpherePatty}
