@@ -82,7 +82,7 @@ const withPeriodicStuff = Wrapped => (props) => {
 
 const SliceOrb = ({viewAngle, bandStartY, bandEndY}) => {
   return (
-    <svg viewBox="-201 -201 402 402" style={{width: 400, height: 400}}>
+    <svg className="orb" viewBox="-201 -201 402 402" style={{width: 400, height: 400}}>
       {
         viewAngle < 0
           ? (
