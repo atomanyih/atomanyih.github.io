@@ -10,14 +10,12 @@ const withAnimation = Wrapped => class WithAnimation extends React.Component {
   }
 
   componentDidMount() {
-    const update = t => this.setState({t});
-
     const loop = t => {
-      update(t);
+      this.setState({t});
       this.rafHandle = requestAnimationFrame(loop);
     };
 
-    loop()
+    requestAnimationFrame(loop)
   }
 
   componentWillUnmount() {
