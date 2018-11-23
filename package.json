@@ -1,15 +1,14 @@
 {
   "name": "orb",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "author": "August Toman-Yih <august.toman.yih@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "parcel-bundler": "^1.10.3"
   },
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html -d docs/"
+    "start": "parcel src/index.html"
   },
   "dependencies": {
     "react": "^16.6.3",

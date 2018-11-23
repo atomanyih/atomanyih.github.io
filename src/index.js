@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Orb from './src/Orb';
+import Orb from './Orb';
 
 const root = document.querySelector('#root');
 
