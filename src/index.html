@@ -38,9 +38,25 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 50%;
+    top: 40px;
 
     font-size: 128px;
+  }
+
+  .list-of-things {
+    margin-top: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .link-to-thing {
+    text-decoration: none;
+    color: white;
+    font-size: 24px;
+    font-weight: 200;
+    text-transform: uppercase;
+    letter-spacing: 12px;
   }
 
   .title {
@@ -54,7 +70,6 @@
     padding-left: .75em;
 
     animation: fade-in-title 20000ms;
-    animation-delay: 10s;
     animation-fill-mode: backwards;
   }
 
@@ -85,7 +100,6 @@
     letter-spacing: 0.5em;
 
     animation: fade-in-name 20000ms;
-    animation-delay: 10s;
     animation-fill-mode: backwards;
 
     text-decoration: none;
