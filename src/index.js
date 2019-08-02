@@ -1,42 +1,58 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Orb from './Orb';
+import styled from 'styled-components';
 
 const root = document.querySelector('#root');
 
 const App = () => {
   return (
     <Orchestrator/>
-  )
+  );
 };
 
-class Orchestrator extends React.Component {
-  constructor(props) {
-    super(props);
+const Info = styled.div`
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
 
-    this.state = {
-      showText: true
-    }
-  }
+  display: flex;
+  justify-content: space-between;
+  
+  color: white;
+  
+  animation: fade-in-name 20000ms;
+  animation-fill-mode: backwards;
+`;
 
-  render() {
-    const {showText} = this.state;
+const Title = styled.div`
+  font-size: 24px;
+  letter-spacing: 0.5em;
 
-    return (
-      <div>
-        <div className="orb-layer">
-          <Orb/>
-        </div>
-        <div className="name-layer">
-          {
-            showText && <a className="name" href="https://github.com/atomanyih" target="_blank">
-              August Toman-Yih
-            </a>
-          }
-        </div>
+
+  font-weight: 200;
+
+  text-transform: uppercase;
+`;
+
+const Orchestrator = () => {
+  return (
+    <div>
+      <div className="orb-layer">
+        <Orb/>
       </div>
-    )
-  }
-}
+      <Info>
+        <Title>Orb</Title>
+        <div className="name-layer">
+          <a className="name" href="https://github.com/atomanyih" target="_blank">
+            August Toman-Yih
+          </a>
+        </div>
+      </Info>
+
+    </div>
+  );
+};
 
 ReactDOM.render(<App/>, root);
