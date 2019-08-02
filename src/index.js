@@ -20,7 +20,7 @@ const Info = styled.div`
   display: flex;
   justify-content: space-between;
   
-  color: white;
+  color: ${({textColor}) => textColor};
   
   animation: fade-in-name 20000ms;
   animation-fill-mode: backwards;
@@ -36,14 +36,28 @@ const Title = styled.div`
   text-transform: uppercase;
 `;
 
-const Orchestrator = () => {
+const Display = styled.div`
+  background-color: ${({backgroundColor}) => backgroundColor};
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;
+
+const Page = ({title, backgroundColor, textColor, children}) => {
   return (
     <div>
-      <div className="orb-layer">
-        <Orb/>
-      </div>
-      <Info>
-        <Title>Orb</Title>
+      <Display backgroundColor={backgroundColor}>
+        {children}
+      </Display>
+      <Info textColor={textColor}>
+        <Title>{title}</Title>
         <div className="name-layer">
           <a className="name" href="https://github.com/atomanyih" target="_blank">
             August Toman-Yih
@@ -52,6 +66,15 @@ const Orchestrator = () => {
       </Info>
 
     </div>
+  );
+};
+
+const Orchestrator = () => {
+  return (
+    <Page title={'Orb'} backgroundColor={'#FFF'} textColor={'#141414'}>
+      <Orb/>
+      {/*<iframe src="//atomanyih.github.io/lines" frameborder="0" width={500} height={500}></iframe>*/}
+    </Page>
   );
 };
 
