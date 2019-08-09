@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ReactDOM from 'react-dom';
 import Orb from './Orb';
 import styled from 'styled-components';
@@ -24,6 +24,8 @@ const Info = styled.div`
   
   animation: fade-in-name 20000ms;
   animation-fill-mode: backwards;
+  
+  transition: color 500ms;
 `;
 
 const Title = styled.div`
@@ -34,6 +36,8 @@ const Title = styled.div`
   font-weight: 200;
 
   text-transform: uppercase;
+  
+  opacity: 0.5;
 `;
 
 const Display = styled.div`
@@ -48,11 +52,13 @@ const Display = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+  
+  transition: background-color 500ms;
 `;
 
-const Page = ({title, backgroundColor, textColor, children}) => {
+const Page = ({title, backgroundColor, textColor, children, ...otherProps}) => {
   return (
-    <div>
+    <div {...otherProps}>
       <Display backgroundColor={backgroundColor}>
         {children}
       </Display>
@@ -70,10 +76,29 @@ const Page = ({title, backgroundColor, textColor, children}) => {
 };
 
 const Orchestrator = () => {
+  const [isOrb, setIsOrb] = useState(true);
+
+  if (isOrb) {
+    return (
+      <Page {...{
+        title: 'Orb',
+        backgroundColor: '#FFF',
+        textColor: '#141414',
+        onClick: () => setIsOrb(!isOrb)
+      }}>
+        <Orb/>
+      </Page>
+    );
+  }
+
   return (
-    <Page title={'Orb'} backgroundColor={'#FFF'} textColor={'#141414'}>
-      <Orb/>
-      {/*<iframe src="//atomanyih.github.io/lines" frameborder="0" width={500} height={500}></iframe>*/}
+    <Page {...{
+      title: 'Lines',
+      backgroundColor: 'rgb(178, 34, 34)',
+      textColor: '#FFF',
+      onClick: () => setIsOrb(!isOrb)
+    }}>
+      <iframe src="//atomanyih.github.io/lines" frameborder="0" width={500} height={500}></iframe>
     </Page>
   );
 };
